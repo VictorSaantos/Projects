@@ -1,0 +1,11 @@
+import re
+import pathlib
+import os
+
+#codigo que busca o diretorio
+arquivo = open(input('Coloque aqui o caminho da arquivo: '), 'r')
+texto = arquivo.read()
+
+#codigo de busca do padrão CNPJ do arquivo
+r = re.compile(r'\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}')
+print('CNPJ emissor da NF é: ', r.findall(texto))
