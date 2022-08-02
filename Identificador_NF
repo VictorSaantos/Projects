@@ -3,9 +3,16 @@ import pathlib
 import os
 
 #codigo que busca o diretorio
-arquivo = open(input('Coloque aqui o caminho da arquivo: '), 'r')
-texto = arquivo.read()
+pasta = input('Coloque aqui o caminho da arquivo: ')
+for DANFE in os.walk(pasta , onerror=None , followlinks=True):
+    lista_arquivos = DANFE
+#transformar a tupla numa lista com caminho dos arquivos
+list(lista_arquivos)
+print(lista_arquivos[2])
+#lista_arquivos = arquivo.read()
 
 #codigo de busca do padrão CNPJ do arquivo
-r = re.compile(r'\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}')
-print('CNPJ emissor da NF é: ', r.findall(texto))
+#r = re.compile(r'\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}')
+#print('CNPJ emissor da NF é: ', r.findall(lista_arquivos))
+
+#criar lista com cnpjs localizados
