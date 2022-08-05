@@ -1,18 +1,25 @@
 import re
-import pathlib
+from pathlib import Path
 import os
+import xlsxwriter
+import wave
 
 #codigo que busca o diretorio
-pasta = input('Coloque aqui o caminho da arquivo: ')
-for DANFE in os.walk(pasta , onerror=None , followlinks=True):
-    lista_arquivos = DANFE
-#transformar a tupla numa lista com caminho dos arquivos
-list(lista_arquivos)
-print(lista_arquivos[2])
-#lista_arquivos = arquivo.read()
-
+directory_name = input('Coloque aqui o caminho da arquivo: ')
+for file_name in os.listdir(directory_name):
+    with open(os.path.join(directory_name, file_name), 'r') as f:
+        text = f.read()
+        #print(text)
 #codigo de busca do padrão CNPJ do arquivo
-#r = re.compile(r'\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}')
-#print('CNPJ emissor da NF é: ', r.findall(lista_arquivos))
+r = re.compile(r'\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}')
+mo = r.search(text)
+print(mo)
+
 
 #criar lista com cnpjs localizados
+
+#transformar a tupla numa lista com caminho dos arquivos
+#list(lista_arquivos)
+#arq_pasta = lista_arquivos[2]
+#list(arq_pasta)
+#print(arq_pasta[2])
