@@ -10,7 +10,10 @@ for file_name in os.listdir(directory_name):
     with open(os.path.join(directory_name, file_name), 'r') as f:
         text = f.readline()
         #print(linha)
+        
 #codigo de busca do padrão CNPJ do arquivo
 r = re.compile(r'\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}')
 mo = r.findall(text)
 print(mo)
+
+#salvar em excel os cnpjs encontrados
