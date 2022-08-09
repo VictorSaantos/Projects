@@ -7,13 +7,28 @@ import wave
 #codigo que busca o diretorio
 directory_name = input('Coloque aqui o caminho dos arquivos: ')
 file_name = os.listdir(directory_name)
-with open(os.path.join(directory_name, file_name[1]), 'r') as f:
-    arq_02 = f.readline()
-with open(os.path.join(directory_name, file_name[2]), 'r') as f:
-    arq_03 = f.readline()
-with open(os.path.join(directory_name, file_name[3]), 'r') as f:
-    arq_04 = f.readline()
-text = arq_01 + arq_02 + arq_03 + arq_04
+#usar estrutura de repetição
+if os.path.isfile(os.path.join(directory_name, file_name[0])) == True:
+    with open(os.path.join(directory_name, file_name[0]), 'r') as f:
+        arq_0 = f.readline()
+else:
+    pass
+if os.path.isfile(os.path.join(directory_name, file_name[1])) == True:
+    with open(os.path.join(directory_name, file_name[1]), 'r') as f:
+        arq_01 = f.readline()
+else:
+    pass
+if os.path.isfile(os.path.join(directory_name, file_name[2])) == True:
+    with open(os.path.join(directory_name, file_name[2]), 'r') as f:
+        arq_02 = f.readline()
+else:
+    pass
+if os.path.isfile(os.path.join(directory_name, file_name[3])) == True:
+    with open(os.path.join(directory_name, file_name[3]), 'r') as f:
+        arq_03 = f.readline()
+else:
+    pass
+text = arq_0 + arq_01 + arq_02 + arq_03
 #codigo de busca do padrão CNPJ do arquivo
 r = re.compile(r"\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}")
 mo = r.findall(text)
