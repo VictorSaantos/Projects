@@ -3,7 +3,7 @@ from pathlib import Path
 import os
 import xlsxwriter
 import wave
-
+import pandas as dp
 #codigo que busca o diretorio
 directory_name = input('Coloque aqui o caminho dos arquivos: ')
 file_name = os.listdir(directory_name)
@@ -32,5 +32,9 @@ text = arq_0 + arq_01 + arq_02 + arq_03
 #codigo de busca do padrão CNPJ do arquivo
 r = re.compile(r"\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}")
 mo = r.findall(text)
-print(mo)
+#print(mo)
 #salvar em excel os cnpjs encontrados
+imprimir = mo
+excel = dp.ExcelWriter('CNPJS CAPTADOS', engine='xlsxwriter')
+imprimir.to_excel(excel, sheet_name='tabela_01')
+excel.save()
