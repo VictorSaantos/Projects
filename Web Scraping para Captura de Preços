@@ -1,0 +1,43 @@
+#BIBLIOTECAS UTILIZADAS
+
+import requests
+from bs4 import BeautifulSoup
+import re
+
+#LINK DA PAGINA UTILIZADA PARA CAPTURA DAS INFORMAÇOES
+
+urlfeijao = 'https://www.continente.pt/mercearia/arroz-massa-e-farinha/feijao-grao-de-bico-e-lentilhas/?start=0&pmin=0.01'
+
+#VALIDADOR DO NAVEGADOR UTILIZADO PARA ACESSAR OS SITES
+
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36'}
+
+#CAPTURA DAS INFORMAÇOES E ARMAZENAMENTO
+
+site = requests.get(urlfeijao, headers=headers)
+soup = BeautifulSoup(site.content, 'html.parser')
+prod = soup.find_all('div', class_='ct-inner-tile-wrap row no-gutters justify-content-center align-content-start')
+
+#FORMATAÇAO DAS INFORMAÇAOES CAPTURADAS
+
+with open('precos_feijao_continente.csv', 'a', newline='', encoding='utf-8') as f:
+    for num_prod in prod:
+      marca_prod = num_prod.find('a', class_='ct-tile--description').get_text().strip()
+      descr_prod = num_prod.find('p', class_='ct-tile--brand').get_text().strip()
+      descr_prod1 = num_prod.find('p', class_='ct-tile--quantity').get_text().strip()
+      try:
+        preco_prod = num_prod.find('span', class_='ct-price-formatted').get_text().strip()
+      except:
+        preco_prod = ''
+        marca_prod = ''
+        descr_prod1 = ''
+        pass
+        
+#ORGANIZAÇAO E ARQUIVO EM EXCEL
+
+      linha_marca = marca_prod + ' ' + descr_prod
+      linha_preco = preco_prod
+      linha_kl = descr_prod1
+      f.write(linha_marca + ';' + linha_preco + ';' + linha_kl + '\n')
+      print(linha_marca + linha_preco + linha_kl)
