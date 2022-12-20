@@ -1,43 +1,52 @@
-#BIBLIOTECAS UTILIZADAS
+#bibliotecas
 
 import requests
 from bs4 import BeautifulSoup
-import re
+from openpyxl import Workbook
 
-#LINK DA PAGINA UTILIZADA PARA CAPTURA DAS INFORMAÇOES
+#paramentros do nevagador e captura das infomações no sites
 
-urlfeijao = 'https://www.continente.pt/mercearia/arroz-massa-e-farinha/feijao-grao-de-bico-e-lentilhas/?start=0&pmin=0.01'
+def scrape_data(url):
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36'}
+    response = requests.get(url, headers=headers)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    products = soup.find_all('li', class_='vignette_produit_info js-vignette_produit')
+    data = []
+ 
+#listagem do produtos
+ 
+    for product in products:
+        brand = product.find('p').get_text().strip()
+        price_element = product.find('div', class_='vignette_prix inline')
+        quantity_element = product.find('div', class_='vignette_produit_quantite')
+        price = price_element.get_text().strip()[:5] if price_element else ''
+        quantity = quantity_element.get_text().strip() if quantity_element else ''
+        data.append({'brand': brand, 'price': price, 'quantity': quantity})
+    return data
 
-#VALIDADOR DO NAVEGADOR UTILIZADO PARA ACESSAR OS SITES
+#salvar os dados coletados em arquivos excel separando cada link url por aba
 
-headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36'}
+def write_to_excel(data, filename):
+    workbook = Workbook()
+    for i, sheet_data in enumerate(data):
+        sheet = workbook.create_sheet(title=f'Sheet {i+1}')
+        sheet.append(['brand', 'price', 'quantity'])
+        for row in sheet_data:
+            sheet.append([row['brand'], row['price'], row['quantity']])
+    workbook.save(filename)
 
-#CAPTURA DAS INFORMAÇOES E ARMAZENAMENTO
+#listagem dos links para coleta de dados
 
-site = requests.get(urlfeijao, headers=headers)
-soup = BeautifulSoup(site.content, 'html.parser')
-prod = soup.find_all('div', class_='ct-inner-tile-wrap row no-gutters justify-content-center align-content-start')
+def main():
+    urls = ['https://lojaonline.intermarche.pt/40-marinha-grande/rayon/mercearia/arroz-massa-farinha-e-sementes/10178-arroz',
+            'https://lojaonline.intermarche.pt/40-marinha-grande/rayon/mercearia/arroz-massa-farinha-e-sementes/10178-arroz',
+            'https://lojaonline.intermarche.pt/40-marinha-grande/rayon/mercearia/feijao-e-grao-seco/10242-feijao']
 
-#FORMATAÇAO DAS INFORMAÇAOES CAPTURADAS
+    data = []
+    for url in urls:
+        data.append(scrape_data(url))
 
-with open('precos_feijao_continente.csv', 'a', newline='', encoding='utf-8') as f:
-    for num_prod in prod:
-      marca_prod = num_prod.find('a', class_='ct-tile--description').get_text().strip()
-      descr_prod = num_prod.find('p', class_='ct-tile--brand').get_text().strip()
-      descr_prod1 = num_prod.find('p', class_='ct-tile--quantity').get_text().strip()
-      try:
-        preco_prod = num_prod.find('span', class_='ct-price-formatted').get_text().strip()
-      except:
-        preco_prod = ''
-        marca_prod = ''
-        descr_prod1 = ''
-        pass
-        
-#ORGANIZAÇAO E ARQUIVO EM EXCEL
+    write_to_excel(data, 'precos_produtos_intermarche.xlsx')
 
-      linha_marca = marca_prod + ' ' + descr_prod
-      linha_preco = preco_prod
-      linha_kl = descr_prod1
-      f.write(linha_marca + ';' + linha_preco + ';' + linha_kl + '\n')
-      print(linha_marca + linha_preco + linha_kl)
+if __name__ == '__main__':
+    main()
